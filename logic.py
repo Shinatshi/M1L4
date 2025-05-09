@@ -1,5 +1,9 @@
 from random import randint
 import requests
+from datetime import datetime, timedelta
+
+
+
 
 class Pokemon:
     pokemons = {}
@@ -14,7 +18,7 @@ class Pokemon:
         self.types = self.get_types()
         self.hp = randint(50, 100)
         self.power = randint(5, 15)
-
+        self.last_feed_time = datetime.now()
 
         Pokemon.pokemons[pokemon_trainer] = self
 
@@ -51,17 +55,7 @@ class Pokemon:
         else:
             return ['normal']
         
-
-    
-    # Метод класса для получения информации
-    def info(self):
-        return f"Имя твоего покеомона: {self.name}\n Типы: {', '.join(self.types)}, Здоровье (HP): {self.hp} Сила атаки (Power): {self.power}"
-
-    # Метод класса для получения картинки покемона
-    def show_img(self):
-        return self.img
-
-def attack(self, enemy):
+    def attack(self, enemy):
         if enemy.__class__.__name__ == "Wizard" and randint(1, 5) == 1:
             return "Покемон-волшебник применил щит в сражении"
         if enemy.hp > self.power:
@@ -71,6 +65,25 @@ def attack(self, enemy):
             enemy.hp = 0
             return f"Победа @{self.pokemon_trainer} над @{enemy.pokemon_trainer}! "
         
+    def feed(self, feed_interval=20, hp_increase=10):
+        current_time = datetime.now()
+        delta_time = timedelta(seconds=feed_interval)
+        if (current_time - self.last_feed_time) > delta_time:
+            self.hp += hp_increase
+            self.last_feed_time = current_time
+            return f"Здоровье покемона увеличено. Текущее здоровье: {self.hp}"
+        else:
+            next_time = self.last_feed_time + delta_time
+            return f"Рано кормить. Следующее время кормления: {next_time.strftime('%H:%M:%S')}"
+    
+    # Метод класса для получения информации
+    def info(self):
+        return f"Имя твоего покеомона: {self.name}\n Типы: {', '.join(self.types)}, Здоровье (HP): {self.hp} Сила атаки (Power): {self.power}"
+
+    # Метод класса для получения картинки покемона
+    def show_img(self):
+        return self.img
+
 
 
 
@@ -90,7 +103,10 @@ class Fighter(Pokemon):
         self.power = self.base_power
         return result +f"\n Боец {self.name} Боец применил супер-атаку силой, +{power_boost} к силе атаки!"
     
-
+    def feed(self, feed_interval=20, hp_increase=20):
+        reduced_interval = feed_interval
+        result = super().feed(reduced_interval, hp_increase)
+        return result + f"Боец {self.name} набрался сил и стал крепче!"
 
 
 
@@ -111,3 +127,9 @@ class Wizard(Pokemon):
             self.magic_shield = False
             return f"{self.name} блокирует атаку щитом и восстанавливает пять хп"
         return super().attack(enemy)
+    
+
+
+def feed(self, feed_interval=10, hp_increase=10):
+        result = super().feed(feed_interval, hp_increase)
+        return result + f"  Волшебник {self.name} питается чаще благодаря магии!"

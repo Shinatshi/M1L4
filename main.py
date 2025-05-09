@@ -44,6 +44,14 @@ def info_pok(message):
     else:
         bot.send_message(message.chat.id, "У тебя еще нет покемона. Используй команду /go, чтобы получить одного.")
 
-
+@bot.message_handler(commands=['feed'])
+def feed_pok(message):
+    username = message.from_user.username
+    if username in Pokemon.pokemons:
+        pok = Pokemon.pokemons[username]
+        result = pok.feed()
+        bot.send_message(message.chat.id, result)
+    else:
+        bot.send_message(message.chat.id, "У тебя ещё нет покемона. Используй команду /go, чтобы получить одного.!")
         
 bot.infinity_polling(none_stop=True)
